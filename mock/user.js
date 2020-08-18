@@ -29,8 +29,8 @@ export default [
     url: '/vue-admin-template/user/login',
     type: 'post',
     response: config => {
-      const { mobile } = config.body
-      const token = tokens[mobile]
+      const { username } = config.body
+      const token = tokens[username]
 
       // mock error
       if (!token) {

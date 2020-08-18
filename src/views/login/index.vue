@@ -6,19 +6,18 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="mobile">
+      <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="mobile"
-          v-model="loginForm.mobile"
+          ref="username"
+          v-model="loginForm.username"
           placeholder="Username"
-          name="mobile"
+          name="username"
           type="text"
           tabindex="1"
           auto-complete="on"
-          @blur="needCode"
         />
       </el-form-item>
 
@@ -45,7 +44,7 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">mobile: admin</span>
+        <span style="margin-right:20px;">username: admin</span>
         <span> password: any</span>
       </div>
 
@@ -55,8 +54,6 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import { sendCode, need_code } from '@/api/user'
-import { getHistoryToken } from '@/utils/auth'
 
 export default {
   name: 'Login',
@@ -77,15 +74,13 @@ export default {
     }
     return {
       loginForm: {
-        mobile: '13244777777',
-        code: '0000',
-        password: 'sudaizhongxin88'
+        username: 'admin',
+        password: '111111'
       },
       loginRules: {
-        // mobile: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        // password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
-      checkMobile: '',
       loading: false,
       passwordType: 'password',
       redirect: undefined
@@ -100,28 +95,6 @@ export default {
     }
   },
   methods: {
-    needCode() {
-      if (this.loginForm.mobile === this.checkMobile) {
-        return
-      }
-      const json1 = { mobile: this.loginForm.mobile, token: getHistoryToken(this.loginForm.mobile) }
-      console.log(json1)
-      need_code(json1).then(res => {
-        this.checkMobile = this.loginForm.mobile
-        const type = res.data.need
-        if (type === true) {
-          // 需要验证
-          this.yanzhengtype = true
-          this.loginForm.code = ''
-        } else {
-          // 不需要验证
-          this.loginForm.code = '0000'
-          this.yanzhengtype = ''
-        }
-      }).catch((err) => {
-        this.$message.error(err.msg)
-      })
-    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -198,6 +171,7 @@ $cursor: #fff;
   }
 }
 </style>
+
 <style lang="scss" scoped>
 $bg:#2d3a4b;
 $dark_gray:#889aa4;

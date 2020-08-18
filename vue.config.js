@@ -36,31 +36,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy: {
-      // change xxx-api/login => mock/login
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        // target: `http://127.0.0.1:${port}/mock`,
-        target: `https://m-admin.kuaidai5.com/mi/`,
-        // target: `http://192.168.0.111:8002`,
-        changeOrigin: true,
-        pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
-        }
-      }
-    }
-    // proxy: {
-    //   '/api': {
-    //     target: `https://m-admin.kuaidai5.com/mi/`,
-    //     changeOrigin: true, // 是否改变域名
-    //     ws: true
-    //     // pathRewrite: {
-    //     //   // 路径重写
-    //     //   "/api": "" // 这个意思就是以api开头的，定向到哪里, 如果你的后边还有路径的话， 会自动拼接上
-    //     // }
-    //   }
-    // }
-    // before: require('./mock/mock-server.js')
+    before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

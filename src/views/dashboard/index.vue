@@ -6,13 +6,16 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
+import { getIdaaa } from '@/utils/auth'
 export default {
   name: 'Dashboard',
   computed: {
     ...mapGetters([
       'name'
     ])
+  },
+  created: function() {
+    // console.log(getIdaaa())
   }
 }
 </script>

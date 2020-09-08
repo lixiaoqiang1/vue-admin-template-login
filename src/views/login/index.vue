@@ -6,18 +6,19 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="mobile">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
+          ref="mobile"
+          v-model="loginForm.mobile"
           placeholder="Username"
-          name="username"
+          name="mobile"
           type="text"
           tabindex="1"
           auto-complete="on"
+          @blur="needCode"
         />
       </el-form-item>
 
@@ -42,9 +43,10 @@
       </el-form-item>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
+      <p>13244777777</p>
+      <p>sudaizhongxin88</p>
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
+        <span style="margin-right:20px;">mobile: admin</span>
         <span> password: any</span>
       </div>
 
@@ -54,7 +56,8 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-
+import { sendCode, need_code } from '@/api/user'
+import { getHistoryToken, getIdaaa } from '@/utils/auth'
 export default {
   name: 'Login',
   data() {
@@ -74,12 +77,13 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        mobile: '',
+        code: '0000',
+        password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        // mobile: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
       passwordType: 'password',
@@ -94,7 +98,37 @@ export default {
       immediate: true
     }
   },
+  created: function() {
+    console.log(JSON.parse(getIdaaa()))
+    if (getIdaaa() !== '') {
+      this.loginForm = JSON.parse(getIdaaa())
+    }
+  },
   methods: {
+    needCode() {
+      if (this.loginForm.mobile === this.checkMobile) {
+        return
+      }
+      const json1 = { mobile: this.loginForm.mobile
+      // , token: getHistoryToken(this.loginForm.mobile)
+      }
+      console.log(json1)
+      need_code(json1).then(res => {
+        this.checkMobile = this.loginForm.mobile
+        const type = res.data.need
+        if (type === true) {
+          // 需要验证
+          this.yanzhengtype = true
+          this.loginForm.code = ''
+        } else {
+          // 不需要验证
+          this.loginForm.code = '0000'
+          this.yanzhengtype = ''
+        }
+      }).catch((err) => {
+        this.$message.error(err.msg)
+      })
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''

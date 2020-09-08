@@ -1,15 +1,16 @@
 import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,removeRole, getRole, setRole, setIdaaa, getIdaaa } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
+    roles: getRole(),
     name: '',
-    avatar: ''
+    avatar: '',
+    idaaa: getIdaaa()
   }
 }
-
 const state = getDefaultState()
 
 const mutations = {
@@ -18,6 +19,7 @@ const mutations = {
   },
   SET_TOKEN: (state, token) => {
     state.token = token
+    console.log(state.token)
   },
   SET_NAME: (state, name) => {
     state.name = name
@@ -30,12 +32,15 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { mobile, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ mobile: mobile, password: password }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        const token = data.type + ' ' + data.token
+        commit('SET_TOKEN', token)
+        // console.log(userInfo)
+        setIdaaa(userInfo)
+        setToken(token, mobile)
         resolve()
       }).catch(error => {
         reject(error)
@@ -54,7 +59,8 @@ const actions = {
         }
 
         const { name, avatar } = data
-
+        const roles = data.permissions
+        setRole(roles)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
@@ -69,6 +75,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
+        removeRole()
         resetRouter()
         commit('RESET_STATE')
         resolve()
